@@ -721,8 +721,34 @@ if(qForm){
       if(data.ok){
         fsSuccess.style.display = 'block';
         qForm.reset();
-        fsBtn.textContent = 'Sent ✓';
+        fsBtn.textContent = 'Sent';
         fsBtn.disabled = false;
+        // Save lead to Command Centre localStorage
+        try {
+          var leadName = qForm.querySelector('[name="name"]') ? qForm.querySelector('[name="name"]').value : '';
+          var leadPhone = qForm.querySelector('[name="phone"]') ? qForm.querySelector('[name="phone"]').value : '';
+          var leadEmail = qForm.querySelector('[name="email"]') ? qForm.querySelector('[name="email"]').value : '';
+          var leadArea = qForm.querySelector('[name="area"]') ? qForm.querySelector('[name="area"]').value : '';
+          var leadJob = qForm.querySelector('[name="job_type"]') ? qForm.querySelector('[name="job_type"]').value : '';
+          var leadDesc = qForm.querySelector('[name="message"]') ? qForm.querySelector('[name="message"]').value : '';
+          var newLead = {
+            id: Date.now(),
+            name: leadName,
+            phone: leadPhone,
+            email: leadEmail,
+            area: leadArea,
+            job: leadJob,
+            desc: leadDesc,
+            source: 'Website',
+            status: 'new',
+            priority: false,
+            date: new Date().toISOString(),
+            notes: 'From easyproperty.ie contact form'
+          };
+          var existing = JSON.parse(localStorage.getItem('ecc_leads') || '[]');
+          existing.unshift(newLead);
+          localStorage.setItem('ecc_leads', JSON.stringify(existing));
+        } catch(e) {}
       } else {
         var msg = (data.errors && data.errors.map(function(e){return e.message;}).join(', ')) || 'Something went wrong. Please try again.';
         fsError.style.display = 'block';
